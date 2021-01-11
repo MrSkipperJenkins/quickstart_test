@@ -3,7 +3,7 @@ const readline = require('readline');
 const {google} = require('googleapis');
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/script.projects'];
+const SCOPES = ['https://www.googleapis.com/auth/script.projects https://www.googleapis.com/auth/script.scriptapp'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -70,32 +70,49 @@ function getAccessToken(oAuth2Client, callback) {
  * Creates a new script project, upload a file, and log the script's URL.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
+
 function callAppsScript(auth) {
-  const script = google.script({version: 'v1', auth});
-  script.projects.create({
-    resource: {
-      title: 'My Script',
-    },
-  }, (err, res) => {
-    if (err) return console.log(`The API create method returned an error: ${err}`);
-    script.projects.updateContent({
-      scriptId: res.data.scriptId,
-      auth,
-      resource: {
-        files: [{
-          name: 'hello',
-          type: 'SERVER_JS',
-          source: 'function helloWorld() {\n  console.log("Hello, world!");\n}',
-        }, {
-          name: 'appsscript',
-          type: 'JSON',
-          source: '{\"timeZone\":\"America/New_York\",\"exceptionLogging\":' +
-           '\"CLOUD\"}',
-        }],
-      },
-    }, {}, (err, res) => {
-      if (err) return console.log(`The API updateContent method returned an error: ${err}`);
-      console.log(`https://script.google.com/d/${res.data.scriptId}/edit`);
-    });
-  });
-}
+    const scriptId = '1XamavHRCoD8I7hl51xTVNivikrlcsH1iRJ2bBuDmYUWrpNgqdYtWX1yO';
+      const script = google.script({version: 'v1', auth});
+      script.scripts.run({
+        resource: {
+          function: 'scriptRunTest',
+        },
+        scriptId: scriptId,
+      }, (err, res) => {
+        if (err) {
+            return console.log(`The API scripts run method returned an error: ${err}`);
+        } else {
+          console.log(res.response.result);
+        }
+      });
+    }
+// function callAppsScript(auth) {
+//   const script = google.script({version: 'v1', auth});
+//   script.projects.create({
+//     resource: {
+//       title: 'My Script',
+//     },
+//   }, (err, res) => {
+//     if (err) return console.log(`The API create method returned an error: ${err}`);
+//     script.projects.updateContent({
+//       scriptId: res.data.scriptId,
+//       auth,
+//       resource: {
+//         files: [{
+//           name: 'hello',
+//           type: 'SERVER_JS',
+//           source: 'function helloWorld() {\n  console.log("Hello, world!");\n}',
+//         }, {
+//           name: 'appsscript',
+//           type: 'JSON',
+//           source: '{\"timeZone\":\"America/New_York\",\"exceptionLogging\":' +
+//            '\"CLOUD\"}',
+//         }],
+//       },
+//     }, {}, (err, res) => {
+//       if (err) return console.log(`The API updateContent method returned an error: ${err}`);
+//       console.log(`https://script.google.com/d/${res.data.scriptId}/edit`);
+//     });
+//   });
+// }
